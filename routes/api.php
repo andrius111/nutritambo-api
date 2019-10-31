@@ -13,14 +13,25 @@ use Illuminate\Http\Request;
 |
 */
 
-/** UF */
-Route::get('uf', 'UfController@index')->name('api.uf.index');
-Route::get('uf/{uf}', 'UfController@show')->name('api.uf.show');
-Route::post('uf', 'UfController@store')->name('api.uf.store');
-Route::put('uf/{uf}', 'UfController@update')->name('api.uf.update');
-Route::delete('uf/{uf}', 'UfController@destroy')->name('api.uf.destroy');
+// Cadastro e login
+Route::post('login','LoginController@login')->name('api.login.login');
+Route::post('user','UserController@store')->name('api.user.store');
 
-/** NOT FOUND */
+Route::group(['middleware' => 'auth.jwt'], function () {
+
+    // Logout
+    Route::get('logout', 'LoginController@logout')->name('api.login.logout');
+
+    // UF
+    Route::get('uf', 'UfController@index')->name('api.uf.index');
+    Route::get('uf/{uf}', 'UfController@show')->name('api.uf.show');
+    Route::post('uf', 'UfController@store')->name('api.uf.store');
+    Route::put('uf/{uf}', 'UfController@update')->name('api.uf.update');
+    Route::delete('uf/{uf}', 'UfController@destroy')->name('api.uf.destroy');
+
+});
+
+// Not found
 Route::fallback(function(){
-  return response()->json(['error' => 'Method Not Found'], 404);
+    return response()->json(['error' => 'Method Not Found'], 404);
 })->name('api.fallback.404');

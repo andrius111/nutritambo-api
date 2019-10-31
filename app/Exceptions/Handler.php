@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Illuminate\Http\JsonResponse;
 
 class Handler extends ExceptionHandler
 {
@@ -46,6 +49,21 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return response()->json(['error' => 'Resource not found'], 404);
+        if ($exception instanceof ModelNotFoundException) {
+            return response()->json(['error' => 'Resource not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        if ($exception instanceof UnauthorizedHttpException) {
+            return response()->json(['error' => $exception->getMessage()], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        if ($exception->getMessage() == '') {
+            return response()->json(['error' => 'Forbidden'], JsonResponse::HTTP_FORBIDDEN);
+        }
+
+        return response()->json(
+            ['error' => $exception->getMessage()],
+            ((int)$exception->getCode() == 0 ? JsonResponse::HTTP_BAD_REQUEST : $exception->getCode())
+        );
     }
 }
