@@ -61,9 +61,10 @@ class Handler extends ExceptionHandler
             return response()->json(['error' => 'Forbidden'], JsonResponse::HTTP_FORBIDDEN);
         }
 
-        return response()->json(
-            ['error' => $exception->getMessage()],
-            ((int)$exception->getCode() == 0 ? JsonResponse::HTTP_BAD_REQUEST : $exception->getCode())
-        );
+        if ($exception->getCode() == '23000') {
+            return response()->json(['error' => 'Unable to delete data that has 1 or more reference(s).'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        return response()->json(['error' => $exception->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
     }
 }

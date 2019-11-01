@@ -29,6 +29,12 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::put('uf/{uf}', 'UfController@update')->name('api.uf.update');
     Route::delete('uf/{uf}', 'UfController@destroy')->name('api.uf.destroy');
 
+    // Cidade
+    Route::get('cidade', 'CidadeController@index')->name('api.cidade.index');
+    Route::get('cidade/{cidade}', 'CidadeController@show')->name('api.cidade.show');
+    Route::post('cidade', 'CidadeController@store')->name('api.cidade.store');
+    Route::put('cidade/{cidade}', 'CidadeController@update')->name('api.cidade.update');
+    Route::delete('cidade/{cidade}', 'CidadeController@destroy')->name('api.cidade.destroy');
 });
 
 // Not found
