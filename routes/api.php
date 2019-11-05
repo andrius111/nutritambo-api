@@ -18,7 +18,6 @@ Route::post('login','LoginController@login')->name('api.login.login');
 Route::post('user','UserController@store')->name('api.user.store');
 
 Route::group(['middleware' => 'auth.jwt'], function () {
-
     // Logout
     Route::get('logout', 'LoginController@logout')->name('api.login.logout');
 
@@ -35,6 +34,13 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::post('cidade', 'CidadeController@store')->name('api.cidade.store');
     Route::put('cidade/{cidade}', 'CidadeController@update')->name('api.cidade.update');
     Route::delete('cidade/{cidade}', 'CidadeController@destroy')->name('api.cidade.destroy');
+
+    // Atividade
+    Route::get('atividade', 'AtividadeController@index')->name('api.atividade.index');
+    Route::get('atividade/{atividade}', 'AtividadeController@show')->name('api.atividade.show');
+    Route::post('atividade', 'AtividadeController@store')->name('api.atividade.store');
+    Route::put('atividade/{atividade}', 'AtividadeController@update')->name('api.atividade.update');
+    Route::delete('atividade/{atividade}', 'AtividadeController@destroy')->name('api.atividade.destroy');
 });
 
 // Not found
