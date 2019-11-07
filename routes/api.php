@@ -14,50 +14,50 @@ use Illuminate\Http\Request;
 */
 
 // Cadastro e login
-Route::post('login','LoginController@login')->name('api.login.login');
-Route::post('user','UserController@store')->name('api.user.store');
+Route::post('login','LoginController@login');
+Route::post('user','UserController@store');
 
 Route::group(['middleware' => 'auth.jwt'], function () {
     // Logout
-    Route::get('logout', 'LoginController@logout')->name('api.login.logout');
+    Route::get('logout', 'LoginController@logout');
 
     // UF
-    Route::get('uf', 'UfController@index')->name('api.uf.index');
-    Route::get('uf/{uf}', 'UfController@show')->name('api.uf.show');
-    Route::post('uf', 'UfController@store')->name('api.uf.store');
-    Route::put('uf/{uf}', 'UfController@update')->name('api.uf.update');
-    Route::delete('uf/{uf}', 'UfController@destroy')->name('api.uf.destroy');
+    Route::get('ufs', 'UfController@index');
+    Route::get('ufs/{uf}', 'UfController@show');
+    Route::post('ufs', 'UfController@store');
+    Route::put('ufs/{uf}', 'UfController@update');
+    Route::delete('ufs/{uf}', 'UfController@destroy');
 
     // Cidade
-    Route::get('cidade', 'CidadeController@index')->name('api.cidade.index');
-    Route::get('cidade/{cidade}', 'CidadeController@show')->name('api.cidade.show');
-    Route::post('cidade', 'CidadeController@store')->name('api.cidade.store');
-    Route::put('cidade/{cidade}', 'CidadeController@update')->name('api.cidade.update');
-    Route::delete('cidade/{cidade}', 'CidadeController@destroy')->name('api.cidade.destroy');
+    Route::get('cidades', 'CidadeController@index');
+    Route::get('cidades/{cidade}', 'CidadeController@show');
+    Route::post('cidades', 'CidadeController@store');
+    Route::put('cidades/{cidade}', 'CidadeController@update');
+    Route::delete('cidades/{cidade}', 'CidadeController@destroy');
 
     // Atividade
-    Route::get('atividade', 'AtividadeController@index')->name('api.atividade.index');
-    Route::get('atividade/{atividade}', 'AtividadeController@show')->name('api.atividade.show');
-    Route::post('atividade', 'AtividadeController@store')->name('api.atividade.store');
-    Route::put('atividade/{atividade}', 'AtividadeController@update')->name('api.atividade.update');
-    Route::delete('atividade/{atividade}', 'AtividadeController@destroy')->name('api.atividade.destroy');
+    Route::get('atividades', 'AtividadeController@index');
+    Route::get('atividades/{atividade}', 'AtividadeController@show');
+    Route::post('atividades', 'AtividadeController@store');
+    Route::put('atividades/{atividade}', 'AtividadeController@update');
+    Route::delete('atividades/{atividade}', 'AtividadeController@destroy');
 
-    // Pessoa
-    Route::get('pessoa', 'PessoaController@index')->name('api.pessoa.index');
-    Route::get('pessoa/{pessoa}', 'PessoaController@show')->name('api.pessoa.show');
-    Route::post('pessoa', 'PessoaController@store')->name('api.pessoa.store');
-    Route::put('pessoa/{pessoa}', 'PessoaController@update')->name('api.pessoa.update');
-    Route::delete('pessoa/{pessoa}', 'PessoaController@destroy')->name('api.pessoa.destroy');
+    // Fornecedor
+    Route::get('fornecedores', 'FornecedorController@index');
+    Route::get('fornecedores/{fornecedor}', 'FornecedorController@show');
+    Route::post('fornecedores', 'FornecedorController@store');
+    Route::put('fornecedores/{fornecedor}', 'FornecedorController@update');
+    Route::delete('fornecedores/{fornecedor}', 'FornecedorController@destroy');
 
-    // Pessoa Contato
-    Route::get('pessoa/{pessoa}/contato', 'PessoaContatoController@index')->name('api.pessoaContato.index');
-    Route::get('pessoa/{pessoa}/contato/{cdContato}', 'PessoaContatoController@show')->name('api.pessoaContato.show');
-    Route::post('pessoa/{pessoa}/contato', 'PessoaContatoController@store')->name('api.pessoaContato.store');
-    Route::put('pessoa/{pessoa}/contato/{cdContato}', 'PessoaContatoController@update')->name('api.pessoaContato.update');
-    Route::delete('pessoa/{pessoa}/contato/{cdContato}', 'PessoaContatoController@destroy')->name('api.pessoaContato.destroy');
+    // Fornecedor Contato
+    Route::get('fornecedores/{cdPessoa}/contatos', 'PessoaContatoController@index');
+    Route::get('fornecedores/{cdPessoa}/contatos/{cdContato}', 'PessoaContatoController@show');
+    Route::post('fornecedores/{cdPessoa}/contatos', 'PessoaContatoController@store');
+    Route::put('fornecedores/{cdPessoa}/contatos/{cdContato}', 'PessoaContatoController@update');
+    Route::delete('fornecedores/{cdPessoa}/contatos/{cdContato}', 'PessoaContatoController@destroy');
 });
 
 // Not found
 Route::fallback(function(){
     return response()->json(['error' => 'Method Not Found'], 404);
-})->name('api.fallback.404');
+});

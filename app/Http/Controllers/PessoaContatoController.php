@@ -3,53 +3,67 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use App\Pessoa;
 use App\Http\Requests\PessoaContatoRequest;
+use Illuminate\Http\Request;
+use App\Services\ObterFornecedorCliente;
 
 class PessoaContatoController extends Controller
 {
+    /** @var \App\Fornecedor|\App\Cliente */
+    protected $fornecedorCliente;
+
     /**
-     * @param Pessoa $pessoa
-     * @return \Illuminate\Database\Eloquent\Collection
+     * PessoaContatoController constructor.
+     * @param ObterFornecedorCliente $obterFornecedorCliente
+     * @param Request $request
      */
-    public function index(Pessoa $pessoa)
+    public function __construct(ObterFornecedorCliente $obterFornecedorCliente, Request $request)
     {
-        return $pessoa->contatos()->get();
+        $this->fornecedorCliente = $obterFornecedorCliente->obterViaRota($request);
     }
 
     /**
-     * @param Pessoa $pessoa
+     * @param int $cdPessoa
+     * @return mixed
+     */
+    public function index($cdPessoa)
+    {
+        return $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->contatos;
+    }
+
+    /**
+     * @param int $cdPessoa
      * @param PessoaContatoRequest $request
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return mixed
      */
-    public function store(Pessoa $pessoa, PessoaContatoRequest $request)
+    public function store($cdPessoa, PessoaContatoRequest $request)
     {
-        return $pessoa->contatos()->create($request->all());
+        return $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->contatos()->create($request->all());
     }
 
     /**
-     * @param Pessoa $pessoa
+     * @param int $cdPessoa
      * @param int $cdContato
-     * @return array
      */
-    public function show(Pessoa $pessoa, $cdContato)
+    public function show($cdPessoa, $cdContato)
     {
-        return $pessoa->contatos->find($cdContato) ?? [];
+        return $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->contatos->find($cdContato) ??
+               abort(404, 'No query results for model [App\Pessoa\Contato] ' . $cdContato);
     }
 
     /**
      * @param PessoaContatoRequest $request
-     * @param Pessoa $pessoa
+     * @param int $cdPessoa
      * @param int $cdContato
      * @return JsonResponse
      * @throws \Exception
      */
-    public function update(PessoaContatoRequest $request, Pessoa $pessoa, $cdContato)
+    public function update(PessoaContatoRequest $request, $cdPessoa, $cdContato)
     {
-        $pessoaContato = $pessoa->contatos()->find($cdContato);
+        $pessoaContato = $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->contatos()->find($cdContato);
 
         if ($pessoaContato == null)
-            throw new \Exception('Contato not found.');
+            abort(404, 'No query results for model [App\Pessoa\Contato] ' . $cdContato);
 
         $pessoaContato->update($request->all());
 
@@ -57,17 +71,17 @@ class PessoaContatoController extends Controller
     }
 
     /**
-     * @param Pessoa $pessoa
+     * @param int $cdPessoa
      * @param int $cdContato
+     * @param Request $request
      * @return JsonResponse
-     * @throws \Exception
      */
-    public function destroy(Pessoa $pessoa, $cdContato)
+    public function destroy($cdPessoa, $cdContato)
     {
-        $pessoaContato = $pessoa->contatos()->find($cdContato);
+        $pessoaContato = $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->contatos()->find($cdContato);
 
         if ($pessoaContato == null)
-            throw new \Exception('Contato not found.');
+            abort(404, 'No query results for model [App\Pessoa\Contato] ' . $cdContato);
 
         $pessoaContato->delete();
 

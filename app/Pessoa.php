@@ -50,4 +50,12 @@ class Pessoa extends Model
     {
         return $this->hasMany(\App\PessoaTelefone::class,  'cd_pessoa');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function fornecedor()
+    {
+        return $this->belongsTo(\App\Fornecedor::class, 'cd_pessoa');
+    }
 }

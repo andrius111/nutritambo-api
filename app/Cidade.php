@@ -17,13 +17,15 @@ class Cidade extends Model
     ];
 
     /** @var array */
-    protected $with = ['uf'];
+    protected $with = [
+        'uf'
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function uf()
     {
-        return $this->belongsTo('App\Uf', 'cd_uf');
+        return $this->belongsTo(\App\Uf::class, 'cd_uf');
     }
 }

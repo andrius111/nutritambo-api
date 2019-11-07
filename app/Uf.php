@@ -20,6 +20,6 @@ class Uf extends Model
      */
     public function cidades()
     {
-        return $this->hasMany('App\Cidade');
+        return $this->hasMany(\App\Cidade::class);
     }
 }

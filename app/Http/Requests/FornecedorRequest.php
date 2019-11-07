@@ -9,7 +9,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PessoaRequest extends FormRequest
+class FornecedorRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
