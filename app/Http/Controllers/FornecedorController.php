@@ -7,27 +7,30 @@ use App\Pessoa;
 use App\Http\Requests\FornecedorRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Mockery\Exception;
+use App\Services\ObterFiltros;
 
 class FornecedorController extends Controller
 {
+    /** @var ObterFiltros */
+    protected $obterFiltros;
+
     /**
+     * PessoaContatoController constructor.
+     * @param ObterFiltros $obterFiltros
      * @param Request $request
-     * @return mixed
      */
-    public function index(Request $request)
+    public function __construct(ObterFiltros $obterFiltros)
     {
-        $arrFiltros = [];
+        $this->obterFiltros = $obterFiltros;
+    }
 
-        if ($request->get('id_ativo') !== null)
-        {
-            if (!in_array($request->get('id_ativo'), [0, 1]))
-                throw new Exception('id_ativo deve ser 0 ou 1');
-
-            $arrFiltros['id_ativo'] = $request->get('id_ativo');
-        }
-
-        return Fornecedor::where($arrFiltros)->get();
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
+    public function index()
+    {
+        return Fornecedor::where($this->obterFiltros->obter('Fornecedor'))->get();
     }
 
     /**

@@ -2,83 +2,98 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
+use App\Http\Requests\PessoaTelefoneRequest;
 use Illuminate\Http\Request;
+use App\Services\ObterFornecedorCliente;
+use App\Services\ObterFiltros;
 
 class PessoaTelefoneController extends Controller
 {
+    /** @var \App\Fornecedor|\App\Cliente */
+    protected $fornecedorCliente;
+
+    /** @var ObterFiltros */
+    protected $obterFiltros;
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * PessoaContatoController constructor.
+     * @param ObterFornecedorCliente $obterFornecedorCliente
+     * @param Request $request
      */
-    public function index()
+    public function __construct(ObterFornecedorCliente $obterFornecedorCliente, ObterFiltros $obterFiltros, Request $request)
     {
-        //
+        $this->fornecedorCliente = $obterFornecedorCliente->obterViaRota($request);
+        $this->obterFiltros = $obterFiltros;
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param int $cdPessoa
+     * @return mixed
+     * @throws \Exception
      */
-    public function create()
+    public function index($cdPessoa)
     {
-        //
+        return $this->fornecedorCliente::findOrFail($cdPessoa)
+                    ->pessoa
+                    ->telefones()
+                    ->where($this->obterFiltros->obter('PessoaTelefone'))
+                    ->get();
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param int $cdPessoa
+     * @param PessoaTelefoneRequest $request
+     * @return mixed
      */
-    public function store(Request $request)
+    public function store($cdPessoa, PessoaTelefoneRequest $request)
     {
-        //
+        return $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->telefones()->create($request->all());
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $cdPessoa
+     * @param int $cdTelefone
      */
-    public function show($id)
+    public function show($cdPessoa, $cdTelefone)
     {
-        //
+        return $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->telefones->find($cdTelefone) ??
+               abort(404, 'No query results for model [App\Pessoa\Telefone] ' . $cdTelefone);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param PessoaTelefoneRequest $request
+     * @param int $cdPessoa
+     * @param int $cdTelefone
+     * @return JsonResponse
+     * @throws \Exception
      */
-    public function edit($id)
+    public function update(PessoaTelefoneRequest $request, $cdPessoa, $cdTelefone)
     {
-        //
+        $pessoaTelefone = $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->telefones()->find($cdTelefone);
+
+        if ($pessoaTelefone == null)
+            abort(404, 'No query results for model [App\Pessoa\Telefone] ' . $cdTelefone);
+
+        $pessoaTelefone->update($request->all());
+
+        return response()->json($pessoaTelefone, JsonResponse::HTTP_OK);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $cdPessoa
+     * @param int $cdTelefone
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function destroy($cdPessoa, $cdTelefone)
     {
-        //
-    }
+        $pessoaTelefone = $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->telefones()->find($cdTelefone);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        if ($pessoaTelefone == null)
+            abort(404, 'No query results for model [App\Pessoa\Telefone] ' . $cdTelefone);
+
+        $pessoaTelefone->delete();
+
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }

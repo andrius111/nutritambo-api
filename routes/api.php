@@ -55,6 +55,27 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::post('fornecedores/{cdPessoa}/contatos', 'PessoaContatoController@store');
     Route::put('fornecedores/{cdPessoa}/contatos/{cdContato}', 'PessoaContatoController@update');
     Route::delete('fornecedores/{cdPessoa}/contatos/{cdContato}', 'PessoaContatoController@destroy');
+
+    // Fornecedor Email
+    Route::get('fornecedores/{cdPessoa}/emails', 'PessoaEmailController@index');
+    Route::get('fornecedores/{cdPessoa}/emails/{cdEmail}', 'PessoaEmailController@show');
+    Route::post('fornecedores/{cdPessoa}/emails', 'PessoaEmailController@store');
+    Route::put('fornecedores/{cdPessoa}/emails/{cdEmail}', 'PessoaEmailController@update');
+    Route::delete('fornecedores/{cdPessoa}/emails/{cdEmail}', 'PessoaEmailController@destroy');
+
+    // Fornecedor Endereco
+    Route::get('fornecedores/{cdPessoa}/enderecos', 'PessoaEnderecoController@index');
+    Route::get('fornecedores/{cdPessoa}/enderecos/{cdEndereco}', 'PessoaEnderecoController@show');
+    Route::post('fornecedores/{cdPessoa}/enderecos', 'PessoaEnderecoController@store');
+    Route::put('fornecedores/{cdPessoa}/enderecos/{cdEndereco}', 'PessoaEnderecoController@update');
+    Route::delete('fornecedores/{cdPessoa}/enderecos/{cdEndereco}', 'PessoaEnderecoController@destroy');
+
+    // Fornecedor Telefone
+    Route::get('fornecedores/{cdPessoa}/telefones', 'PessoaTelefoneController@index');
+    Route::get('fornecedores/{cdPessoa}/telefones/{cdTelefone}', 'PessoaTelefoneController@show');
+    Route::post('fornecedores/{cdPessoa}/telefones', 'PessoaTelefoneController@store');
+    Route::put('fornecedores/{cdPessoa}/telefones/{cdTelefone}', 'PessoaTelefoneController@update');
+    Route::delete('fornecedores/{cdPessoa}/telefones/{cdTelefone}', 'PessoaTelefoneController@destroy');
 });
 
 // Not found

@@ -2,83 +2,98 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
+use App\Http\Requests\PessoaEmailRequest;
 use Illuminate\Http\Request;
+use App\Services\ObterFornecedorCliente;
+use App\Services\ObterFiltros;
 
 class PessoaEmailController extends Controller
 {
+    /** @var \App\Fornecedor|\App\Cliente */
+    protected $fornecedorCliente;
+
+    /** @var ObterFiltros */
+    protected $obterFiltros;
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * PessoaContatoController constructor.
+     * @param ObterFornecedorCliente $obterFornecedorCliente
+     * @param Request $request
      */
-    public function index()
+    public function __construct(ObterFornecedorCliente $obterFornecedorCliente, ObterFiltros $obterFiltros, Request $request)
     {
-        //
+        $this->fornecedorCliente = $obterFornecedorCliente->obterViaRota($request);
+        $this->obterFiltros = $obterFiltros;
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param int $cdPessoa
+     * @return mixed
+     * @throws \Exception
      */
-    public function create()
+    public function index($cdPessoa)
     {
-        //
+        return $this->fornecedorCliente::findOrFail($cdPessoa)
+                    ->pessoa
+                    ->emails()
+                    ->where($this->obterFiltros->obter('PessoaEmail'))
+                    ->get();
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param int $cdPessoa
+     * @param PessoaEmailRequest $request
+     * @return mixed
      */
-    public function store(Request $request)
+    public function store($cdPessoa, PessoaEmailRequest $request)
     {
-        //
+        return $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->emails()->create($request->all());
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $cdPessoa
+     * @param int $cdEmail
      */
-    public function show($id)
+    public function show($cdPessoa, $cdEmail)
     {
-        //
+        return $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->emails->find($cdEmail) ??
+               abort(404, 'No query results for model [App\Pessoa\Email] ' . $cdEmail);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param PessoaEmailRequest $request
+     * @param int $cdPessoa
+     * @param int $cdEmail
+     * @return JsonResponse
+     * @throws \Exception
      */
-    public function edit($id)
+    public function update(PessoaEmailRequest $request, $cdPessoa, $cdEmail)
     {
-        //
+        $pessoaEmail = $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->emails()->find($cdEmail);
+
+        if ($pessoaEmail == null)
+            abort(404, 'No query results for model [App\Pessoa\Email] ' . $cdEmail);
+
+        $pessoaEmail->update($request->all());
+
+        return response()->json($pessoaEmail, JsonResponse::HTTP_OK);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $cdPessoa
+     * @param int $cdEmail
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function destroy($cdPessoa, $cdEmail)
     {
-        //
-    }
+        $pessoaEmail = $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->emails()->find($cdEmail);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        if ($pessoaEmail == null)
+            abort(404, 'No query results for model [App\Pessoa\Email] ' . $cdEmail);
+
+        $pessoaEmail->delete();
+
+        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
     }
 }

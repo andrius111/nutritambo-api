@@ -29,8 +29,8 @@ class PessoaTelefoneRequest extends FormRequest
     public function rules()
     {
         return [
-            'cd_pessoa' => 'required|integer|exists:pessoas,cd_pessoa',
-            'id_principal' => 'required|integer|between:0,1',
+            'cd_pessoa' => 'integer|exists:pessoas,cd_pessoa',
+            'id_principal' => 'integer|between:0,1',
             'id_tipo' => 'required|integer',
             'nr_telefone' => 'required|min:10|max:11',
 

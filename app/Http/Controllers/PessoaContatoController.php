@@ -6,29 +6,40 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Requests\PessoaContatoRequest;
 use Illuminate\Http\Request;
 use App\Services\ObterFornecedorCliente;
+use App\Services\ObterFiltros;
 
 class PessoaContatoController extends Controller
 {
     /** @var \App\Fornecedor|\App\Cliente */
     protected $fornecedorCliente;
 
+    /** @var ObterFiltros */
+    protected $obterFiltros;
+
     /**
      * PessoaContatoController constructor.
      * @param ObterFornecedorCliente $obterFornecedorCliente
+     * @param ObterFiltros $obterFiltros
      * @param Request $request
      */
-    public function __construct(ObterFornecedorCliente $obterFornecedorCliente, Request $request)
+    public function __construct(ObterFornecedorCliente $obterFornecedorCliente, ObterFiltros $obterFiltros, Request $request)
     {
         $this->fornecedorCliente = $obterFornecedorCliente->obterViaRota($request);
+        $this->obterFiltros = $obterFiltros;
     }
 
     /**
      * @param int $cdPessoa
      * @return mixed
+     * @throws \Exception
      */
     public function index($cdPessoa)
     {
-        return $this->fornecedorCliente::findOrFail($cdPessoa)->pessoa->contatos;
+        return $this->fornecedorCliente::findOrFail($cdPessoa)
+                    ->pessoa
+                    ->contatos()
+                    ->where($this->obterFiltros->obter('PessoaContato'))
+                    ->get();
     }
 
     /**
@@ -73,7 +84,6 @@ class PessoaContatoController extends Controller
     /**
      * @param int $cdPessoa
      * @param int $cdContato
-     * @param Request $request
      * @return JsonResponse
      */
     public function destroy($cdPessoa, $cdContato)
