@@ -14,4 +14,12 @@ class Atividade extends Model
         'nm_atividade',
         'nr_cfop',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function clientes()
+    {
+        return $this->hasMany(\App\Cliente::class);
+    }
 }
