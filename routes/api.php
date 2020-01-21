@@ -14,12 +14,15 @@ use Illuminate\Http\Request;
 */
 
 // Cadastro e login
-Route::post('login','LoginController@login');
-Route::post('user','UserController@store');
+Route::post('login', 'LoginController@login');
+Route::post('user', 'UserController@store');
 
 Route::group(['middleware' => 'auth.jwt'], function () {
     // Logout
     Route::get('logout', 'LoginController@logout');
+
+    // Dados do usuario
+    Route::get('user', 'UserController@show');
 
     // UF
     Route::get('ufs', 'UfController@index');
