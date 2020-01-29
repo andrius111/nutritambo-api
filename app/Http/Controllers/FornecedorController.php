@@ -30,7 +30,10 @@ class FornecedorController extends Controller
      */
     public function index()
     {
-        return Fornecedor::where($this->obterFiltros->obter('Fornecedor'))->get();
+        return Fornecedor::where($this->obterFiltros->obter('Fornecedor'))
+                ->get()
+                ->sortBy('pessoa.nm_pessoa', SORT_NATURAL|SORT_FLAG_CASE)
+                ->sortByDesc('id_ativo', SORT_NATURAL|SORT_FLAG_CASE);
     }
 
     /**
